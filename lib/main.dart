@@ -892,58 +892,51 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
   }
 
   Widget _buildQuizArea() {
-    final List<Map<String, dynamic>> questions = [
-      {
-        'q': 'Dentro do COBIT 2019, qual entidade é ultimamente responsável pela governança de TI?',
-        'o': ['O CIO', 'O Conselho de Administração', 'O Comitê de TI', 'Gerente de Projetos'],
-        'a': 1,
-      },
-      {
-        'q': 'O COBIT distingue Governança de Gestão. Qual destas é uma função da GESTÃO?',
-        'o': ['Definir o apetite ao risco', 'Avaliar necessidades dos stakeholders', 'Planejar, construir e executar atividades', 'Monitorar o desempenho estratégico'],
-        'a': 2,
-      },
-      {
-        'q': 'No ITIL 4, qual é o papel principal da Governança no SVS?',
-        'o': ['Gerenciar o Service Desk', 'Garantir que a estratégia esteja alinhada ao valor', 'Implementar firewalls', 'Contratar novos técnicos'],
-        'a': 1,
-      },
-      {
-        'q': 'Qual princípio do ITIL 4 foca em "Colaborar e promover visibilidade"?',
-        'o': ['Foco no valor', 'Mantenha simples e prático', 'Colaborar e promover visibilidade', 'Começar onde você está'],
-        'a': 2,
-      },
-      {
-        'q': 'De acordo com a ISO 27001, qual cláusula exige que a alta gestão demonstre liderança com o SGSI?',
-        'o': ['Cláusula 4 (Contexto)', 'Cláusula 5 (Liderança)', 'Cláusula 7 (Suporte)', 'Cláusula 9 (Avaliação)'],
-        'a': 1,
-      },
-      {
-        'q': 'Qual o objetivo de uma Auditoria Interna em um ambiente ISO 27001?',
-        'o': ['Encontrar culpados por falhas', 'Prover garantia independente de conformidade', 'Instalar novos softwares', 'Aumentar o orçamento de TI'],
-        'a': 1,
-      },
-      {
-        'q': 'Se o COBIT define o "O quê" e o ITIL define o "Como", qual o papel da ISO 27001?',
-        'o': ['Substituir o COBIT', 'Prover o padrão de segurança para os serviços', 'Gerenciar projetos de infraestrutura', 'Apenas para empresas de tecnologia'],
-        'a': 1,
-      },
-      {
-        'q': 'Qual termo é comum ao COBIT, ITIL e ISO 27001 para definir um resultado de sucesso?',
-        'o': ['Excelência Técnica', 'Valor para o Stakeholder / Alinhamento ao Negócio', 'Risco Zero', 'Custo Mínimo'],
-        'a': 1,
-      },
-      {
-        'q': 'O modelo EDM do COBIT significa:',
-        'o': ['Executar, Desenvolver, Monitorar', 'Avaliar, Direcionar, Monitorar', 'Engajar, Desenhar, Medir', 'Efetivar, Dados, Métricas'],
-        'a': 1,
-      },
-      {
-        'q': 'No CMMI, o Nível 3 de Maturidade é caracterizado como:',
-        'o': ['Inicial/Reativo', 'Gerenciado', 'Definido/Documentado', 'Otimizado'],
-        'a': 2,
-      },
+    final String framework = _recommendedFramework?.toUpperCase() ?? 'GENERIC';
+
+    // Banco de questões dinâmico por Framework
+    final List<Map<String, dynamic>> cobitQuestions = [
+      {'q': 'Qual o foco principal do framework COBIT 2019?', 'o': ['Gestão de Incidentes', 'Governança Estratégica de TI', 'Desenvolvimento de Software', 'Suporte Técnico'], 'a': 1},
+      {'q': 'O modelo EDM do COBIT significa:', 'o': ['Executar, Desenvolver, Monitorar', 'Avaliar, Direcionar, Monitorar', 'Engajar, Desenhar, Medir', 'Efetivar, Dados, Métricas'], 'a': 1},
+      {'q': 'Quem é o responsável último pela Governança no COBIT?', 'o': ['O Gerente de TI', 'O Conselho de Administração', 'O Desenvolvedor Sênior', 'O Usuário Final'], 'a': 1},
+      {'q': 'Qual destes é um domínio do COBIT?', 'o': ['APO (Alinhar, Planejar e Organizar)', 'Service Desk', 'Java Framework', 'Cloud Computing'], 'a': 0},
+      {'q': 'O COBIT 2019 introduziu os "Fatores de...":', 'o': ['Sucesso', 'Design', 'Risco', 'Custo'], 'a': 1},
+      {'q': 'Governança é diferente de Gestão no COBIT. Gestão foca em:', 'o': ['Definir a estratégia', 'Planejar, construir, executar e monitorar', 'Avaliar necessidades dos sócios', 'Monitorar conformidade legal'], 'a': 1},
+      {'q': 'Quantos objetivos de Governança e Gestão possui o COBIT 2019?', 'o': ['10', '25', '40', '100'], 'a': 2},
+      {'q': 'O princípio "Sistema de Governança Dinâmico" significa:', 'o': ['O sistema deve ser estático', 'O sistema deve ser ajustado ao mudar fatores de design', 'O sistema roda apenas em servidores Linux', 'O sistema é atualizado pela Microsoft'], 'a': 1},
+      {'q': 'O componente "Processos" do COBIT descreve:', 'o': ['A fofoca da empresa', 'Um conjunto de práticas para atingir objetivos', 'Como instalar o Windows', 'Regras de RH'], 'a': 1},
+      {'q': 'O COBIT utiliza o CMMI para medir:', 'o': ['Velocidade da internet', 'Capacidade e Maturidade de processos', 'Temperatura do Data Center', 'Linhas de código'], 'a': 1},
     ];
+
+    final List<Map<String, dynamic>> itilQuestions = [
+      {'q': 'Qual o conceito central do ITIL 4?', 'o': ['Instalar Servidores', 'Co-criação de Valor', 'Venda de Hardware', 'Programação C++'], 'a': 1},
+      {'q': 'O que significa SVS no ITIL 4?', 'o': ['Sistema de Valor de Serviço', 'Software de Vendas Simples', 'Suporte de Vídeo Sincronizado', 'Servidor Virtual Seguro'], 'a': 0},
+      {'q': 'Quantas Práticas de Gestão possui o ITIL 4?', 'o': ['10', '34', '50', '5'], 'a': 1},
+      {'q': 'Qual destes é um Princípio Orientador do ITIL?', 'o': ['Foco no Custo', 'Foco no Valor', 'Foco no Código', 'Foco no Chefe'], 'a': 1},
+      {'q': 'A Cadeia de Valor de Serviço possui quantas atividades?', 'o': ['2', '6', '12', '24'], 'a': 1},
+      {'q': 'No ITIL 4, o que é um "Incidente"?', 'o': ['Uma melhoria planejada', 'Uma interrupção não planejada do serviço', 'Uma nova requisição de hardware', 'Um treinamento de equipe'], 'a': 1},
+      {'q': 'Qual dimensão do ITIL foca em fluxos de trabalho?', 'o': ['Organizações e Pessoas', 'Parceiros e Fornecedores', 'Fluxos de Valor e Processos', 'Informação e Tecnologia'], 'a': 2},
+      {'q': 'O conceito de "Melhoria Contínua" deve ser aplicado:', 'o': ['Apenas no final do ano', 'Apenas quando algo quebra', 'Em todos os níveis da organização', 'Apenas pela diretoria'], 'a': 2},
+      {'q': 'O que é uma "Prática" no ITIL?', 'o': ['Um software específico', 'Um conjunto de recursos para realizar um trabalho', 'Um erro de sistema', 'Uma reunião de condomínio'], 'a': 1},
+      {'q': 'Qual o objetivo do Gerenciamento de Mudança?', 'o': ['Impedir qualquer mudança', 'Maximizar o número de mudanças bem-sucedidas', 'Aumentar o custo do projeto', 'Trocar o CEO'], 'a': 1},
+    ];
+
+    final List<Map<String, dynamic>> isoQuestions = [
+      {'q': 'Qual o objetivo principal da ISO/IEC 27001?', 'o': ['Aumentar vendas', 'Sistema de Gestão de Segurança da Informação (SGSI)', 'Consertar computadores', 'Limpeza de dados'], 'a': 1},
+      {'q': 'A Tríade da Segurança da Informação é composta por:', 'o': ['Preço, Prazo e Qualidade', 'Confidencialidade, Integridade e Disponibilidade', 'CPU, RAM e SSD', 'Wifi, Bluetooth e Ethernet'], 'a': 1},
+      {'q': 'O Anexo A da ISO 27001 contém:', 'o': ['A lista de funcionários', 'Os controles de segurança', 'O manual do usuário', 'O balanço financeiro'], 'a': 1},
+      {'q': 'Na ISO 27001, o que é um "Risco"?', 'o': ['Uma certeza de perda', 'Efeito da incerteza nos objetivos', 'Um vírus de computador', 'Um funcionário insatisfeito'], 'a': 1},
+      {'q': 'A Cláusula 5 da norma exige comprometimento da:', 'o': ['Portaria', 'Alta Direção', 'Equipe de TI apenas', 'Operadora de internet'], 'a': 1},
+      {'q': 'O ciclo PDCA na ISO significa:', 'o': ['Planejar, Fazer, Checar, Agir', 'Partir, Dirigir, Correr, Atropelar', 'Pedir, Dar, Comprar, Alugar', 'Processar, Dados, Criar, Armazenar'], 'a': 0},
+      {'q': 'Uma auditoria interna serve para:', 'o': ['Demitir pessoas', 'Verificar a conformidade e eficácia do SGSI', 'Instalar antivírus', 'Contar o número de mouses'], 'a': 1},
+      {'q': 'O que é a SOA (Statement of Applicability)?', 'o': ['Um contrato de venda', 'Declaração de Aplicabilidade dos controles', 'Um código de erro', 'Um sistema de chat'], 'a': 1},
+      {'q': 'Qual o tempo de validade comum de uma certificação ISO 27001?', 'o': ['Para sempre', '3 anos', '1 mês', '10 anos'], 'a': 1},
+      {'q': 'A integridade, na segurança, garante que:', 'o': ['A informação não foi alterada indevidamente', 'Ninguém viu a informação', 'O sistema está sempre online', 'O computador é novo'], 'a': 0},
+    ];
+
+    List<Map<String, dynamic>> questions = cobitQuestions; // Default
+    if (framework.contains('ITIL')) questions = itilQuestions;
+    if (framework.contains('ISO') || framework.contains('27001')) questions = isoQuestions;
 
     if (_currentQuestionIndex >= questions.length) {
       bool passed = _correctAnswers >= 7;

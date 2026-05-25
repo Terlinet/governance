@@ -185,6 +185,99 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
     }
   }
 
+  Future<void> _generateAICertificate() async {
+    final pdf = pw.Document();
+    final String timestamp = DateTime.now().toIso8601String().substring(0, 10);
+    final String certId = "TRL-${math.Random().nextInt(999999).toString().padLeft(6, '0')}";
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4.landscape,
+        build: (pw.Context context) {
+          return pw.Container(
+            decoration: pw.BoxDecoration(
+              border: pw.Border.all(color: PdfColors.cyanAccent, width: 5),
+              color: PdfColors.black,
+            ),
+            padding: const pw.EdgeInsets.all(40),
+            child: pw.Stack(
+              children: [
+                // Fundo decorativo estilo Matrix/Blockchain
+                pw.Center(
+                  child: pw.Opacity(
+                    opacity: 0.1,
+                    child: pw.Text('BLOCKCHAIN SYNC TERMINAL', style: pw.TextStyle(fontSize: 60, fontWeight: pw.FontWeight.bold, color: PdfColors.cyanAccent)),
+                  ),
+                ),
+                pw.Column(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Cabeçalho do Certificado
+                    pw.Column(
+                      children: [
+                        pw.Text('CERTIFICADO DE SINCRONIZAÇÃO IA', style: pw.TextStyle(fontSize: 32, fontWeight: pw.FontWeight.bold, color: PdfColors.cyanAccent, letterSpacing: 5)),
+                        pw.SizedBox(height: 10),
+                        pw.Container(height: 2, width: 400, color: PdfColors.cyanAccent),
+                        pw.SizedBox(height: 10),
+                        pw.Text('TERLINET GOVERNANCE ECOSYSTEM', style: pw.TextStyle(fontSize: 12, color: PdfColors.white, letterSpacing: 8)),
+                      ],
+                    ),
+
+                    // Corpo do Certificado
+                    pw.Column(
+                      children: [
+                        pw.Text('Certificamos que o protocolo de implementação para o framework', style: pw.TextStyle(fontSize: 16, color: PdfColors.white)),
+                        pw.SizedBox(height: 15),
+                        pw.Text(_recommendedFramework ?? 'GOVERNANCE FRAMEWORK', style: pw.TextStyle(fontSize: 28, fontWeight: pw.FontWeight.bold, color: PdfColors.greenAccent, letterSpacing: 2)),
+                        pw.SizedBox(height: 15),
+                        pw.Text('foi devidamente processado e absorvido através da Interface Humana TerlineT AI.', style: pw.TextStyle(fontSize: 14, color: PdfColors.white)),
+                        pw.SizedBox(height: 10),
+                        pw.Text('NÍVEL DE MATURIDADE ALCANÇADO: CMMI STAGE ${_maturityResult?.contains('0') == true ? '0' : (_maturityResult?.contains('1') == true ? '1' : (_maturityResult?.contains('2') == true ? '2' : (_maturityResult?.contains('3') == true ? '3' : (_maturityResult?.contains('4') == true ? '4' : '5'))))}',
+                          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.cyanAccent)),
+                      ],
+                    ),
+
+                    // Rodapé com Assinatura e Dados Blockchain
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: pw.CrossAxisAlignment.end,
+                      children: [
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text('BLOCKCHAIN HASH: ${certId}', style: pw.TextStyle(fontSize: 8, color: PdfColors.grey, fontFamily: pw.FontWeight.bold.family)),
+                            pw.Text('TIMESTAMP: $timestamp', style: pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
+                            pw.SizedBox(height: 10),
+                            pw.Text('VALIDAÇÃO SINTÉTICA COMPLETA', style: pw.TextStyle(fontSize: 10, color: PdfColors.greenAccent)),
+                          ],
+                        ),
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                          children: [
+                            pw.Text('TerlineT', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold, color: PdfColors.cyanAccent, fontStyle: pw.FontStyle.italic)),
+                            pw.Container(height: 1, width: 150, color: PdfColors.white),
+                            pw.SizedBox(height: 5),
+                            pw.Text('MASTER GOVERNANCE AI', style: pw.TextStyle(fontSize: 10, color: PdfColors.white)),
+                            pw.SizedBox(height: 5),
+                            pw.Text('O futuro é seu!', style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.greenAccent)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
+  }
+
   Future<void> _printImplementationPlan() async {
     final pdf = pw.Document();
 
@@ -765,15 +858,34 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
           const SizedBox(height: 30),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _printImplementationPlan,
-              icon: const Icon(Icons.print, color: Colors.blueAccent),
-              label: const Text("IMPRIMIR PLANO DE IMPLEMENTAÇÃO", style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent.withOpacity(0.1),
-                side: const BorderSide(color: Colors.blueAccent),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _printImplementationPlan,
+                    icon: const Icon(Icons.print, color: Colors.blueAccent),
+                    label: const Text("IMPRIMIR PLANO", style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 11)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent.withOpacity(0.1),
+                      side: const BorderSide(color: Colors.blueAccent),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _generateAICertificate,
+                    icon: const Icon(Icons.verified_user, color: Colors.greenAccent),
+                    label: const Text("GERAR CERTIFICADO", style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 11)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.greenAccent.withOpacity(0.1),
+                      side: const BorderSide(color: Colors.greenAccent),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

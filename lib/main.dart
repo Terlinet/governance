@@ -363,11 +363,11 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.chat_bubble_outline, color: Colors.cyanAccent, size: 20),
+                const Icon(Icons.hub_outlined, color: Colors.cyanAccent, size: 20),
                 const SizedBox(width: 10),
                 const Text(
-                  "Está com dúvidas? Clique aqui eu a TerlineT explica",
-                  style: TextStyle(color: Colors.cyanAccent, fontSize: 11, fontWeight: FontWeight.bold),
+                  "TERLINET ADVISORY: ACESSE O PROTOCOLO DE CONHECIMENTO IA",
+                  style: TextStyle(color: Colors.cyanAccent, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                 ),
               ],
             ),

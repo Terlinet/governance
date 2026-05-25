@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:barcode/barcode.dart';
 
 void main() {
   runApp(const TerlineTGovernanceApp());
@@ -53,6 +54,7 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
   final TextEditingController _ramoController = TextEditingController();
   final TextEditingController _techsController = TextEditingController();
   final TextEditingController _chatController = TextEditingController(); // Controller para o chat
+  final TextEditingController _userNameController = TextEditingController(); // Controller para o nome no certificado
 
   // Opções para o formulário de maturidade
   String _docLevel = 'Nenhum';
@@ -80,6 +82,7 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
     _ramoController.dispose();
     _techsController.dispose();
     _chatController.dispose();
+    _userNameController.dispose();
     super.dispose();
   }
 
@@ -186,9 +189,18 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
   }
 
   Future<void> _generateAICertificate() async {
+    if (_userNameController.text.trim().isEmpty) {
+      _showNameInputDialog();
+      return;
+    }
+
     final pdf = pw.Document();
     final String timestamp = DateTime.now().toIso8601String().substring(0, 10);
     final String certId = "TRL-${math.Random().nextInt(999999).toString().padLeft(6, '0')}";
+
+    // Gerar QR Code único (Pode apontar para a validação futura no Hugging Face)
+    final bc = Barcode.qrCode();
+    final qrSvg = bc.toSvg("https://terlinet.github.io/governance/verify?id=$certId", width: 80, height: 80);
 
     pdf.addPage(
       pw.Page(
@@ -202,17 +214,15 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
             padding: const pw.EdgeInsets.all(40),
             child: pw.Stack(
               children: [
-                // Fundo decorativo estilo Matrix/Blockchain
                 pw.Center(
                   child: pw.Opacity(
-                    opacity: 0.1,
+                    opacity: 0.05,
                     child: pw.Text('BLOCKCHAIN SYNC TERMINAL', style: pw.TextStyle(fontSize: 60, fontWeight: pw.FontWeight.bold, color: PdfColors.cyanAccent)),
                   ),
                 ),
                 pw.Column(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
-                    // Cabeçalho do Certificado
                     pw.Column(
                       children: [
                         pw.Text('CERTIFICADO DISPONIBILIZADO POR IA', style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.cyanAccent, letterSpacing: 3)),
@@ -223,15 +233,16 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
                       ],
                     ),
 
-                    // Corpo do Certificado
                     pw.Column(
                       children: [
-                        pw.Text('Certificamos que o protocolo de implementação para o framework', style: pw.TextStyle(fontSize: 16, color: PdfColors.white)),
+                        pw.Text('Certificamos que o profissional', style: pw.TextStyle(fontSize: 14, color: PdfColors.white)),
+                        pw.SizedBox(height: 10),
+                        pw.Text(_userNameController.text.toUpperCase(), style: pw.TextStyle(fontSize: 32, fontWeight: pw.FontWeight.bold, color: PdfColors.white, letterSpacing: 2)),
+                        pw.SizedBox(height: 10),
+                        pw.Text('completou com sucesso a sincronização do framework', style: pw.TextStyle(fontSize: 14, color: PdfColors.white)),
                         pw.SizedBox(height: 15),
                         pw.Text(_recommendedFramework ?? 'GOVERNANCE FRAMEWORK', style: pw.TextStyle(fontSize: 28, fontWeight: pw.FontWeight.bold, color: PdfColors.greenAccent, letterSpacing: 2)),
-                        pw.SizedBox(height: 15),
-                        pw.Text('foi devidamente processado e validado em ambiente 100% sintético.', style: pw.TextStyle(fontSize: 14, color: PdfColors.white)),
-                        pw.SizedBox(height: 5),
+                        pw.SizedBox(height: 10),
                         pw.Text('AVISO: ESTE PROCESSO NÃO CONTOU COM QUALQUER INTERVENÇÃO HUMANA.', style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, color: PdfColors.orangeAccent)),
                         pw.SizedBox(height: 10),
                         pw.Text('NÍVEL DE MATURIDADE ALCANÇADO: CMMI STAGE ${_maturityResult?.contains('0') == true ? '0' : (_maturityResult?.contains('1') == true ? '1' : (_maturityResult?.contains('2') == true ? '2' : (_maturityResult?.contains('3') == true ? '3' : (_maturityResult?.contains('4') == true ? '4' : '5'))))}',
@@ -239,18 +250,17 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
                       ],
                     ),
 
-                    // Rodapé com Assinatura e Dados Blockchain
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: pw.CrossAxisAlignment.end,
                       children: [
                         pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          crossAxisAlignment: pw.Start,
                           children: [
+                            pw.SvgImage(svg: qrSvg),
+                            pw.SizedBox(height: 10),
                             pw.Text('BLOCKCHAIN HASH: ${certId}', style: pw.TextStyle(fontSize: 8, color: PdfColors.grey, fontWeight: pw.FontWeight.bold)),
                             pw.Text('TIMESTAMP: $timestamp', style: pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
-                            pw.SizedBox(height: 10),
-                            pw.Text('VALIDAÇÃO SINTÉTICA COMPLETA', style: pw.TextStyle(fontSize: 10, color: PdfColors.greenAccent)),
                           ],
                         ),
                         pw.Column(
@@ -277,6 +287,47 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
 
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
+  }
+
+  void _showNameInputDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black.withOpacity(0.9),
+        title: const Text("EMISSÃO DE CERTIFICADO", style: TextStyle(color: Colors.cyanAccent, letterSpacing: 2)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Insira seu nome completo para a validação sintética:", style: TextStyle(color: Colors.white70, fontSize: 13)),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _userNameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: "NOME COMPLETO",
+                labelStyle: TextStyle(color: Colors.cyanAccent, fontSize: 12),
+                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
+                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.cyanAccent)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("CANCELAR", style: TextStyle(color: Colors.white38)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _generateAICertificate();
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.cyanAccent.withOpacity(0.2)),
+            child: const Text("GERAR AGORA", style: TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
     );
   }
 

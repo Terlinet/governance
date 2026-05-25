@@ -41,6 +41,7 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
   bool _showMaturityForm = false;
   bool _showManualSelection = false; // Novo controle
   bool _showRobotProtocol = false; // Novo controle
+  bool _showChatBubble = false; // Controle para o chat da IA
   String? _maturityResult;
   String? _recommendedFramework;
 
@@ -48,6 +49,7 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
   final TextEditingController _porteController = TextEditingController();
   final TextEditingController _ramoController = TextEditingController();
   final TextEditingController _techsController = TextEditingController();
+  final TextEditingController _chatController = TextEditingController(); // Controller para o chat
 
   // Opções para o formulário de maturidade
   String _docLevel = 'Nenhum';
@@ -74,6 +76,7 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
     _porteController.dispose();
     _ramoController.dispose();
     _techsController.dispose();
+    _chatController.dispose();
     super.dispose();
   }
 
@@ -266,10 +269,152 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
                   ),
                 ),
               ),
+
+            // Bolha de Chat no canto inferior direito
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: _buildChatBubble(),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildChatBubble() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (_showChatBubble)
+          Container(
+            width: 350,
+            height: 450,
+            margin: const EdgeInsets.only(bottom: 15),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.95),
+              border: Border.all(color: Colors.cyanAccent, width: 2),
+              boxShadow: [BoxShadow(color: Colors.cyanAccent.withOpacity(0.2), blurRadius: 20)],
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  color: Colors.cyanAccent.withOpacity(0.1),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("TERLINET EXPLAINER", style: TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold, fontSize: 12)),
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: const Icon(Icons.close, color: Colors.cyanAccent, size: 18),
+                        onPressed: () => setState(() => _showChatBubble = false),
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      _aiResponse ?? "Olá! Eu sou a TerlineT. Como posso te ajudar com a implementação de COBIT, ITIL, ISO ou outros frameworks de governança?",
+                      style: const TextStyle(color: Colors.white70, fontSize: 13, fontFamily: 'monospace'),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _chatController,
+                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                          decoration: InputDecoration(
+                            hintText: "Sua dúvida...",
+                            hintStyle: const TextStyle(color: Colors.white24),
+                            enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.cyanAccent)),
+                            focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.cyanAccent)),
+                          ),
+                          onSubmitted: (val) => _askAI(val),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.send, color: Colors.cyanAccent),
+                        onPressed: () => _askAI(_chatController.text),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        GestureDetector(
+          onTap: () => setState(() => _showChatBubble = !_showChatBubble),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.8),
+              border: Border.all(color: Colors.cyanAccent, width: 1.5),
+              boxShadow: [BoxShadow(color: Colors.cyanAccent.withOpacity(0.3), blurRadius: 10)],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.chat_bubble_outline, color: Colors.cyanAccent, size: 20),
+                const SizedBox(width: 10),
+                const Text(
+                  "Está com dúvidas? Clique aqui eu a TerlineT explica",
+                  style: TextStyle(color: Colors.cyanAccent, fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _askAI(String query) async {
+    if (query.isEmpty) return;
+    _chatController.clear();
+
+    setState(() {
+      _isLoading = true;
+      _aiResponse = "Processando requisição de conhecimento...";
+    });
+
+    final prompt = """
+    Aja como o MasterGovernance da TerlineT AI.
+    Responda a seguinte dúvida sobre implementação de frameworks de Governança de TI (COBIT, ITIL, ISO, NIST, etc):
+    Dúvida: $query
+
+    Seja técnico, didático e cite as melhores práticas.
+    """;
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://tertulianoshow-terlinet-governance.hf.space/query'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'text': prompt,
+          'is_agent': false,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _aiResponse = data['text'];
+        });
+      }
+    } catch (e) {
+      setState(() => _aiResponse = "Erro na conexão: $e");
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   Widget _buildMissionStatement(BuildContext context) {

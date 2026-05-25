@@ -46,6 +46,9 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
   bool _showManualSelection = false; // Novo controle
   bool _showRobotProtocol = false; // Novo controle
   bool _showChatBubble = false; // Controle para o chat da IA
+  bool _showQuiz = false; // Controle para o quiz
+  int _currentQuestionIndex = 0;
+  int _correctAnswers = 0;
   String? _maturityResult;
   String? _recommendedFramework;
 
@@ -430,6 +433,8 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
                       _buildAIResultArea(),
                     ] else if (_showMaturityForm && _maturityResult == null) ...[
                       _buildMaturityForm(),
+                    ] else if (_showQuiz) ...[
+                      _buildQuizArea(),
                     ] else if (_maturityResult != null) ...[
                       _buildMaturityResultArea(),
                     ],
@@ -886,6 +891,132 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
     );
   }
 
+  Widget _buildQuizArea() {
+    final List<Map<String, dynamic>> questions = [
+      {
+        'q': 'Dentro do COBIT 2019, qual entidade é ultimamente responsável pela governança de TI?',
+        'o': ['O CIO', 'O Conselho de Administração', 'O Comitê de TI', 'Gerente de Projetos'],
+        'a': 1,
+      },
+      {
+        'q': 'O COBIT distingue Governança de Gestão. Qual destas é uma função da GESTÃO?',
+        'o': ['Definir o apetite ao risco', 'Avaliar necessidades dos stakeholders', 'Planejar, construir e executar atividades', 'Monitorar o desempenho estratégico'],
+        'a': 2,
+      },
+      {
+        'q': 'No ITIL 4, qual é o papel principal da Governança no SVS?',
+        'o': ['Gerenciar o Service Desk', 'Garantir que a estratégia esteja alinhada ao valor', 'Implementar firewalls', 'Contratar novos técnicos'],
+        'a': 1,
+      },
+      {
+        'q': 'Qual princípio do ITIL 4 foca em "Colaborar e promover visibilidade"?',
+        'o': ['Foco no valor', 'Mantenha simples e prático', 'Colaborar e promover visibilidade', 'Começar onde você está'],
+        'a': 2,
+      },
+      {
+        'q': 'De acordo com a ISO 27001, qual cláusula exige que a alta gestão demonstre liderança com o SGSI?',
+        'o': ['Cláusula 4 (Contexto)', 'Cláusula 5 (Liderança)', 'Cláusula 7 (Suporte)', 'Cláusula 9 (Avaliação)'],
+        'a': 1,
+      },
+      {
+        'q': 'Qual o objetivo de uma Auditoria Interna em um ambiente ISO 27001?',
+        'o': ['Encontrar culpados por falhas', 'Prover garantia independente de conformidade', 'Instalar novos softwares', 'Aumentar o orçamento de TI'],
+        'a': 1,
+      },
+      {
+        'q': 'Se o COBIT define o "O quê" e o ITIL define o "Como", qual o papel da ISO 27001?',
+        'o': ['Substituir o COBIT', 'Prover o padrão de segurança para os serviços', 'Gerenciar projetos de infraestrutura', 'Apenas para empresas de tecnologia'],
+        'a': 1,
+      },
+      {
+        'q': 'Qual termo é comum ao COBIT, ITIL e ISO 27001 para definir um resultado de sucesso?',
+        'o': ['Excelência Técnica', 'Valor para o Stakeholder / Alinhamento ao Negócio', 'Risco Zero', 'Custo Mínimo'],
+        'a': 1,
+      },
+      {
+        'q': 'O modelo EDM do COBIT significa:',
+        'o': ['Executar, Desenvolver, Monitorar', 'Avaliar, Direcionar, Monitorar', 'Engajar, Desenhar, Medir', 'Efetivar, Dados, Métricas'],
+        'a': 1,
+      },
+      {
+        'q': 'No CMMI, o Nível 3 de Maturidade é caracterizado como:',
+        'o': ['Inicial/Reativo', 'Gerenciado', 'Definido/Documentado', 'Otimizado'],
+        'a': 2,
+      },
+    ];
+
+    if (_currentQuestionIndex >= questions.length) {
+      bool passed = _correctAnswers >= 7;
+      return Container(
+        width: 500,
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.9),
+          border: Border.all(color: passed ? Colors.greenAccent : Colors.redAccent),
+        ),
+        child: Column(
+          children: [
+            Icon(passed ? Icons.verified : Icons.error_outline, size: 64, color: passed ? Colors.greenAccent : Colors.redAccent),
+            const SizedBox(height: 20),
+            Text(passed ? "APROVADO NO PROTOCOLO" : "FALHA NA VALIDAÇÃO",
+                style: TextStyle(color: passed ? Colors.greenAccent : Colors.redAccent, fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            Text("Você acertou $_correctAnswers de ${questions.length} questões.", style: const TextStyle(color: Colors.white70)),
+            const SizedBox(height: 30),
+            if (passed)
+              ElevatedButton(
+                onPressed: _generateAICertificate,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.greenAccent.withOpacity(0.2)),
+                child: const Text("EMITIR CERTIFICADO AGORA", style: TextStyle(color: Colors.greenAccent)),
+              )
+            else
+              ElevatedButton(
+                onPressed: () => setState(() => _showQuiz = false),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent.withOpacity(0.2)),
+                child: const Text("TENTAR NOVAMENTE MAIS TARDE", style: TextStyle(color: Colors.redAccent)),
+              ),
+          ],
+        ),
+      );
+    }
+
+    final q = questions[_currentQuestionIndex];
+
+    return Container(
+      width: 600,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.85),
+        border: Border.all(color: Colors.cyanAccent),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("VALIDAÇÃO DE CONHECIMENTO IA (${_currentQuestionIndex + 1}/10)",
+              style: const TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold, letterSpacing: 2)),
+          const SizedBox(height: 20),
+          Text(q['q'], style: const TextStyle(color: Colors.white, fontSize: 16)),
+          const SizedBox(height: 30),
+          ...List.generate((q['o'] as List).length, (index) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: ListTile(
+              tileColor: Colors.white.withOpacity(0.05),
+              title: Text(q['o'][index], style: const TextStyle(color: Colors.white70, fontSize: 14)),
+              onTap: () {
+                setState(() {
+                  if (index == q['a']) _correctAnswers++;
+                  _currentQuestionIndex++;
+                });
+              },
+              shape: RoundedRectangleBorder(side: const BorderSide(color: Colors.white10), borderRadius: BorderRadius.circular(4)),
+              hoverColor: Colors.cyanAccent.withOpacity(0.1),
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMaturityResultArea() {
     return Container(
       width: 750,
@@ -928,9 +1059,13 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: _generateAICertificate,
+                    onPressed: () => setState(() {
+                      _showQuiz = true;
+                      _currentQuestionIndex = 0;
+                      _correctAnswers = 0;
+                    }),
                     icon: const Icon(Icons.verified_user, color: Colors.greenAccent),
-                    label: const Text("GERAR CERTIFICADO", style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 11)),
+                    label: const Text("SOLICITAR CERTIFICADO", style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 11)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.greenAccent.withOpacity(0.1),
                       side: const BorderSide(color: Colors.greenAccent),

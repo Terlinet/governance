@@ -1,8 +1,20 @@
-2026/05/25-13:29:16.329 1a74 Reusing MANIFEST C:\Users\tertu\AppData\Local\Temp\flutter_tools.92f684af\flutter_tools_chrome_device.d327cdf4\Default\shared_proto_db/MANIFEST-000001
-2026/05/25-13:29:16.330 1a74 Recovering log #16
-2026/05/25-13:29:16.330 1a74 Reusing old log C:\Users\tertu\AppData\Local\Temp\flutter_tools.92f684af\flutter_tools_chrome_device.d327cdf4\Default\shared_proto_db/000016.log 
-2026/05/25-13:29:16.331 1a74 Delete type=0 #3
-2026/05/25-13:29:16.331 1a74 Delete type=0 #4
-2026/05/25-13:29:16.331 1a74 Delete type=0 #7
-2026/05/25-13:29:16.331 1a74 Delete type=0 #10
-2026/05/25-13:29:16.331 1a74 Delete type=0 #13
+2026/05/25-13:50:08.334 3880 Reusing MANIFEST C:\Users\tertu\AppData\Local\Temp\flutter_tools.b3ee335b\flutter_tools_chrome_device.bdb0edb5\Default\shared_proto_db/MANIFEST-000001
+2026/05/25-13:50:08.335 3880 Recovering log #16
+2026/05/25-13:50:08.336 3880 Reusing old log C:\Users\tertu\AppData\Local\Temp\flutter_tools.b3ee335b\flutter_tools_chrome_device.bdb0edb5\Default\shared_proto_db/000016.log 
+2026/05/25-13:50:08.337 3880 Delete type=0 #3
+2026/05/25-13:50:08.337 3880 Delete type=0 #4
+2026/05/25-13:50:08.337 3880 Delete type=0 #7
+2026/05/25-13:50:08.337 3880 Delete type=0 #10
+2026/05/25-13:50:08.337 3880 Delete type=0 #13
+2026/05/25-13:50:28.116 46cc Level-0 table #20: started
+2026/05/25-13:50:28.121 46cc Level-0 table #20: 137771 bytes OK
+2026/05/25-13:50:28.125 46cc Delete type=0 #16
+2026/05/25-13:50:28.125 46cc Compacting 4@0 + 1@1 files
+2026/05/25-13:50:28.139 46cc Generated table #21@0: 606 keys, 124400 bytes
+2026/05/25-13:50:28.139 46cc Compacted 4@0 + 1@1 files => 124400 bytes
+2026/05/25-13:50:28.141 46cc compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/05/25-13:50:28.141 46cc Delete type=2 #8
+2026/05/25-13:50:28.141 46cc Delete type=2 #11
+2026/05/25-13:50:28.141 46cc Delete type=2 #14
+2026/05/25-13:50:28.141 46cc Delete type=2 #17
+2026/05/25-13:50:28.141 46cc Delete type=2 #20

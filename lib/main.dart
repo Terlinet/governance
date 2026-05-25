@@ -245,7 +245,7 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
                         pw.Column(
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
-                            pw.Text('BLOCKCHAIN HASH: ${certId}', style: pw.TextStyle(fontSize: 8, color: PdfColors.grey, fontFamily: pw.FontWeight.bold.family)),
+                            pw.Text('BLOCKCHAIN HASH: ${certId}', style: pw.TextStyle(fontSize: 8, color: PdfColors.grey, fontWeight: pw.FontWeight.bold)),
                             pw.Text('TIMESTAMP: $timestamp', style: pw.TextStyle(fontSize: 8, color: PdfColors.grey)),
                             pw.SizedBox(height: 10),
                             pw.Text('VALIDAÇÃO SINTÉTICA COMPLETA', style: pw.TextStyle(fontSize: 10, color: PdfColors.greenAccent)),

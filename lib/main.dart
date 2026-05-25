@@ -215,11 +215,11 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
                     // Cabeçalho do Certificado
                     pw.Column(
                       children: [
-                        pw.Text('CERTIFICADO DE SINCRONIZAÇÃO IA', style: pw.TextStyle(fontSize: 32, fontWeight: pw.FontWeight.bold, color: PdfColors.cyanAccent, letterSpacing: 5)),
+                        pw.Text('CERTIFICADO DISPONIBILIZADO POR IA', style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.cyanAccent, letterSpacing: 3)),
                         pw.SizedBox(height: 10),
                         pw.Container(height: 2, width: 400, color: PdfColors.cyanAccent),
                         pw.SizedBox(height: 10),
-                        pw.Text('TERLINET GOVERNANCE ECOSYSTEM', style: pw.TextStyle(fontSize: 12, color: PdfColors.white, letterSpacing: 8)),
+                        pw.Text('TERLINET GOVERNANCE ECOSYSTEM - PROTOCOLO AUTÔNOMO', style: pw.TextStyle(fontSize: 10, color: PdfColors.white, letterSpacing: 5)),
                       ],
                     ),
 
@@ -230,7 +230,9 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
                         pw.SizedBox(height: 15),
                         pw.Text(_recommendedFramework ?? 'GOVERNANCE FRAMEWORK', style: pw.TextStyle(fontSize: 28, fontWeight: pw.FontWeight.bold, color: PdfColors.greenAccent, letterSpacing: 2)),
                         pw.SizedBox(height: 15),
-                        pw.Text('foi devidamente processado e absorvido através da Interface Humana TerlineT AI.', style: pw.TextStyle(fontSize: 14, color: PdfColors.white)),
+                        pw.Text('foi devidamente processado e validado em ambiente 100% sintético.', style: pw.TextStyle(fontSize: 14, color: PdfColors.white)),
+                        pw.SizedBox(height: 5),
+                        pw.Text('AVISO: ESTE PROCESSO NÃO CONTOU COM QUALQUER INTERVENÇÃO HUMANA.', style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, color: PdfColors.orangeAccent)),
                         pw.SizedBox(height: 10),
                         pw.Text('NÍVEL DE MATURIDADE ALCANÇADO: CMMI STAGE ${_maturityResult?.contains('0') == true ? '0' : (_maturityResult?.contains('1') == true ? '1' : (_maturityResult?.contains('2') == true ? '2' : (_maturityResult?.contains('3') == true ? '3' : (_maturityResult?.contains('4') == true ? '4' : '5'))))}',
                           style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.cyanAccent)),

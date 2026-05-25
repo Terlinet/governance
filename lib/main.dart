@@ -255,7 +255,7 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
                       crossAxisAlignment: pw.CrossAxisAlignment.end,
                       children: [
                         pw.Column(
-                          crossAxisAlignment: pw.Start,
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
                             pw.SvgImage(svg: qrSvg),
                             pw.SizedBox(height: 10),

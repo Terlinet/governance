@@ -3,6 +3,9 @@ import 'package:video_player/video_player.dart';
 import 'dart:math' as math;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 void main() {
   runApp(const TerlineTGovernanceApp());
@@ -180,6 +183,40 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _printImplementationPlan() async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Header(level: 0, text: 'TerlineT Governance - Plano de Implementacao'),
+              pw.SizedBox(height: 20),
+              pw.Text('Framework Recomendado: $_recommendedFramework'),
+              pw.SizedBox(height: 10),
+              pw.Divider(),
+              pw.SizedBox(height: 10),
+              pw.Text('Relatorio Detalhado:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+              pw.Text(_maturityResult ?? 'Nenhum resultado disponivel.'),
+              pw.SizedBox(height: 20),
+              pw.Footer(
+                trailing: pw.Text('Gerado por TerlineT AI - MasterGovernance'),
+              )
+            ],
+          );
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
   }
 
   void _onMouseMove(PointerEvent details) {
@@ -725,6 +762,20 @@ class _CyberpunkHomePageState extends State<CyberpunkHomePage> {
           const Divider(color: Colors.blueAccent),
           const SizedBox(height: 10),
           Text(_maturityResult!, style: const TextStyle(color: Colors.white, fontFamily: 'monospace', fontSize: 13)),
+          const SizedBox(height: 30),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _printImplementationPlan,
+              icon: const Icon(Icons.print, color: Colors.blueAccent),
+              label: const Text("IMPRIMIR PLANO DE IMPLEMENTAÇÃO", style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent.withOpacity(0.1),
+                side: const BorderSide(color: Colors.blueAccent),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+            ),
+          ),
         ],
       ),
     );
